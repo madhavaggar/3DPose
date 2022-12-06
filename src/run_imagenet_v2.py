@@ -1,10 +1,10 @@
 from datetime import datetime
 from torch.utils.data import  DataLoader
-from models.Models import models_names_dict
+from Models.Models import models_names_dict
 import torch
 import argparse
 from utils import seed_everything, report_writer
-from dataloader import ImageNetV2Dataset, CO3D_Dataset
+from dataloader import ImageNetV2Dataset, CO3D_Dataset, ABODataset
 import os
 import pickle
 
@@ -42,6 +42,8 @@ def run_imagenet_v2(models, batch_size, device, datasetname, exprimentname, mode
             dataset = ImageNetV2Dataset(root_dir=datapath, transform=model.transform) 
         elif datasetname=='co3d':
             dataset =  CO3D_Dataset(root_dir=datapath, transform=model.transform, co3d_id_map=co3d_id_map) 
+        elif datasetname=='abo':
+            dataset = ABODataset(root_dir=datapath, transform=model.transform)
 
         #dataloader
         test_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=1)

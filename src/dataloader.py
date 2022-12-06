@@ -82,7 +82,42 @@ class ObjectPoseDataset(Dataset):
 
         return image, self.all_paths[idx] 
 
+class ABODataset(Dataset):
+    def __init__(self, root_dir, transform=None):
 
+
+      self.imagenetv2_paths = []
+
+      for folder in os.listdir(f"{root_dir}"):
+        if os.path.isdir((f"{root_dir}/{folder}")):
+          for img in os.listdir(f"{root_dir}/{folder}"):
+            self.imagenetv2_paths.append((f"{root_dir}/{folder}/{img}", int(folder)))
+
+      self.transform = transform
+      self.root = root_dir
+
+    def pil_loader(self, path: str) -> Image.Image:
+      # open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
+      with open(path, "rb") as f:
+          print("f:", f)
+          img = Image.open(f)
+          return img.convert("RGB")
+
+    def __len__(self):
+        return len(self.imagenetv2_paths)
+
+    def __getitem__(self, idx):
+        '''
+        Returns the PIL image and the image name
+        '''
+
+        img_path, label = self.imagenetv2_paths[idx]
+        image = self.pil_loader(img_path)
+
+        if self.transform:
+            image = self.transform(image)
+
+        return image, label
 
 
 class ImageNetV2Dataset(Dataset):
